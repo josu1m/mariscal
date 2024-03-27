@@ -20,7 +20,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
 
-    Route::get('/evento', [EventoController::class, 'index'])->name('evento.index');
+    Route::resource('evento', EventoController::class)->only(['index', 'create', 'store'])->names([
+        'index' => 'evento.index',
+        'create' => 'evento.create',
+        'store' => 'evento.store',
+    ]);
+
     Route::get('/user', [UserController::class, 'index'])->name('user.index');
     Route::get('/pago', [PagosController::class, 'index'])->name('pago.index');
 

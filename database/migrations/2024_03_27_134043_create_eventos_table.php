@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('eventos', function (Blueprint $table) {
             $table->id();
+            $table->string('titulo');
+            $table->string('imagen');
+            $table->boolean('activo')->default(true);
             $table->timestamps();
         });
     }

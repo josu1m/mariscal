@@ -28,7 +28,28 @@ class EventoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Valida los datos del formulario
+        $request->validate([
+            'titulo' => 'required|string',
+            'imagen' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Reglas de validación para la imagen
+        ]);    
+
+        $imageName = $request->file('imagen')->getClientOriginalName();
+
+        $request->file('imagen')->storeAs('imagenperfil', $imageName, 'public');
+
+        $perfilData = [
+            'imagen' => 'imagenperfil/' . $imageName,
+        ];
+
+
+        if ($request->filled('titulo')) {
+            $perfilData['titulo'] = $request->input('titulo');
+        }
+        
+        Evento::create($perfilData);
+    
+        return redirect()->route('evento.index')->with('success', 'Evento creado exitosamente.');
     }
 
     /**
