@@ -12,8 +12,11 @@ class EventoController extends Controller
      */
     public function index()
     {
-        return view("administrador.evento.index");
+        $eventos = Evento::all();
+
+        return view("administrador.evento.index", compact('eventos'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -31,26 +34,40 @@ class EventoController extends Controller
         // Valida los datos del formulario
         $request->validate([
             'titulo' => 'required|string',
-            'imagen' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Reglas de validación para la imagen
-        ]);    
+            'imagen' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Reglas de validación para la imagen
+        ]);
 
-        $imageName = $request->file('imagen')->getClientOriginalName();
+        // Verifica si se ha subido un archivo de imagen
+        if ($request->hasFile('imagen')) {
+            // Obtiene el nombre original del archivo
+            $imageName = $request->file('imagen')->getClientOriginalName();
 
-        $request->file('imagen')->storeAs('imagenperfil', $imageName, 'public');
+            // Almacena la imagen en el almacenamiento
+            $request->file('imagen')->storeAs('imagenperfil', $imageName, 'public');
 
-        $perfilData = [
-            'imagen' => 'imagenperfil/' . $imageName,
-        ];
+            // Prepara los datos del evento para la creación
+            $perfilData = [
+                'imagen' => 'imagenperfil/' . $imageName,
+            ];
+        } else {
+            // Si no se subió ninguna imagen, establece el campo 'imagen' como nulo o vacío según tu necesidad
+            $perfilData = [
+                'imagen' => null, // O puedes establecerlo como una cadena vacía según tus necesidades
+            ];
+        }
 
-
+        // Verifica si se proporcionó un título en el formulario
         if ($request->filled('titulo')) {
             $perfilData['titulo'] = $request->input('titulo');
         }
-        
+
+        // Crea el evento utilizando los datos preparados
         Evento::create($perfilData);
-    
+
+        // Redirige de vuelta a la página de eventos con un mensaje de éxito
         return redirect()->route('evento.index')->with('success', 'Evento creado exitosamente.');
     }
+
 
     /**
      * Display the specified resource.
@@ -79,8 +96,10 @@ class EventoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+
     public function destroy(Evento $evento)
     {
-        //
+        $evento->delete();
+        return redirect()->route('evento.index')->with('success', 'Evento eliminado exitosamente.');
     }
 }

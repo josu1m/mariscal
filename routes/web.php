@@ -25,6 +25,8 @@ Route::middleware('auth')->group(function () {
         'create' => 'evento.create',
         'store' => 'evento.store',
     ]);
+    Route::delete('evento/{evento}', [EventoController::class, 'destroy'])->name('evento.destroy');
+
 
     Route::get('/user', [UserController::class, 'index'])->name('user.index');
     Route::get('/pago', [PagosController::class, 'index'])->name('pago.index');
