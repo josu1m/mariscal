@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActividadController;
 use App\Http\Controllers\EstudianteController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\PagoController;
@@ -30,28 +31,37 @@ Route::middleware('auth')->group(function () {
 
 
     Route::get('/user', [UserController::class, 'index'])->name('user.index');
-//pagos
-Route::resource('pago', PagoController::class)->only(['index', 'create', 'store', 'edit', 'update'])->names([
-    'index' => 'pago.index',
-    'create' => 'pago.create',
-    'store' => 'pago.store',
-    'edit' => 'pago.edit',
-    'update' => 'pago.update',
-]);
-//Route::resource('pago', PagoController::class)->only(['edit', 'update']);
+    //pagos
+    Route::resource('pago', PagoController::class)->only(['index', 'create', 'store', 'edit', 'update'])->names([
+        'index' => 'pago.index',
+        'create' => 'pago.create',
+        'store' => 'pago.store',
+        'edit' => 'pago.edit',
+        'update' => 'pago.update',
+    ]);
+    //Route::resource('pago', PagoController::class)->only(['edit', 'update']);
 
 
-Route::delete('estudiante/{estudiante}', [EventoController::class, 'destroy'])->name('estudiante.destroy');
-//estudiante
-Route::resource('estudiante', EstudianteController::class)->only(['index', 'create', 'store'])->names([
-    'index' => 'estudiante.index',
-    'create' => 'estudiante.create',
-    'store' => 'estudiante.store',
-]);
-Route::delete('estudiante/{estudiante}', [EventoController::class, 'destroy'])->name('estudiante.destroy');
+    Route::delete('estudiante/{estudiante}', [EventoController::class, 'destroy'])->name('estudiante.destroy');
+    //estudiante
+    Route::resource('estudiante', EstudianteController::class)->only(['index', 'create', 'store'])->names([
+        'index' => 'estudiante.index',
+        'create' => 'estudiante.create',
+        'store' => 'estudiante.store',
+    ]);
+    Route::delete('estudiante/{estudiante}', [EventoController::class, 'destroy'])->name('estudiante.destroy');
 
+
+    //ACTIVIDAD
+    Route::resource('actividad', ActividadController::class)->only(['index', 'create', 'store', 'edit', 'update'])->names([
+        'index' => 'actividad.index',
+        'create' => 'actividad.create',
+        'store' => 'actividad.store',
+        'edit' => 'actividad.edit',
+        'update' => 'actividad.update',
+    ]);
 
 
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

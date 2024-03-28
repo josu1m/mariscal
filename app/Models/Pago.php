@@ -14,6 +14,11 @@ class Pago extends Model
     {
         return $this->belongsTo(Estudiante::class);
     }
+
+    public function actividad()
+    {
+        return $this->belongsTo(Actividad::class);
+    }
     public function marcarComoPagado()
     {
         $this->estado = 'pagado';

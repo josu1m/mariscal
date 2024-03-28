@@ -37,7 +37,12 @@
                             </th>
                             <th scope="col"
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Cantidad de deuda </th>
+                                Cantidad de deuda 
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Monto Total Pendiente
+                            </th>
+                            
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -105,6 +110,13 @@
                                             0 </span>
                                     @endif
                                 </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @php
+                                        $montoTotalPendiente = $estudiante->pagos()->where('pagado', 0)->sum('monto');
+                                    @endphp
+                                    {{ $montoTotalPendiente }}
+                                </td>
+                                
                             </tr>
                         @endforeach
                     </tbody>

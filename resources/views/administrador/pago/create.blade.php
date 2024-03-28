@@ -12,24 +12,40 @@
 
                 <form method="POST" action="{{ route('pago.store') }}">
                     @csrf <!-- Directiva Blade para protección CSRF -->
+
                     <div class="mt-4">
-                        <select name="estudiante_id[]" id="estudiante_id" class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm" multiple required>
-                            <option value="seleccionar_todos" id="seleccionar_todos">Seleccionar Todos los Estudiantes</option>
-                            @foreach($estudiantes as $estudiante)
-                                <option value="{{ $estudiante->id }}">{{ $estudiante->nombre }} {{ $estudiante->apellido }}</option>
+                        <select name="actividad_id" class="block w-full">
+                            <option>Seleccionar titulo</option>
+                            @foreach ($actividads as $actividad)
+                                <option value="{{ $actividad->id }}">{{ $actividad->nombre }}</option>
                             @endforeach
                         </select>
-                    </div>   
+                    </div>
+
+                    <div class="mt-4">
+                        <select name="estudiante_id[]" id="estudiante_id"
+                            class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"
+                            multiple required>
+                            <option value="seleccionar_todos" id="seleccionar_todos">Seleccionar Todos los Estudiantes
+                            </option>
+                            @foreach ($estudiantes as $estudiante)
+                                <option value="{{ $estudiante->id }}">{{ $estudiante->nombre }}
+                                    {{ $estudiante->apellido }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                     <div class="mt-4">
                         <x-input id="monto" class="block mt-1 w-full" type="number" name="monto" required />
                     </div>
 
                     <div class="mt-4">
-                        <textarea id="descripcion" name="descripcion" class="block mt-1 w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"></textarea>
+                        <textarea id="descripcion" name="descripcion"
+                            class="block mt-1 w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"></textarea>
                     </div>
 
                     <div class="flex items-center justify-end mt-4">
-                        <button class="ml-4 bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                        <button
+                            class="ml-4 bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                             {{ __('Guardar') }}
                         </button>
                     </div>

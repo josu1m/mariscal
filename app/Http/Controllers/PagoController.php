@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Actividad;
 use App\Models\Pago;
 use Illuminate\Http\Request;
 use App\Models\Estudiante;
@@ -14,9 +15,12 @@ class PagoController extends Controller
      */
     public function index()
     {
-        $pagos = Pago::with('estudiante')->get();
+        // Cargar los pagos con las relaciones 'estudiante' y 'actividad' ordenados por fecha de creación de forma descendente
+        $pagos = Pago::with(['estudiante', 'actividad'])->orderBy('created_at', 'desc')->get();
+    
         return view("administrador.pago.index", compact('pagos'));
     }
+    
 
     /**
      * Show the form for creating a new resource.
@@ -24,8 +28,11 @@ class PagoController extends Controller
     public function create()
     {
         $estudiantes = Estudiante::all();
-
-        return view("administrador.pago.create", compact('estudiantes'));
+        
+        // Recuperar solo las actividades que están activas
+        $actividads = Actividad::where('actividad_estado', true)->get();
+        
+        return view("administrador.pago.create", compact('estudiantes', 'actividads'));
     }
 
     /**
@@ -37,6 +44,7 @@ class PagoController extends Controller
         $request->validate([
             'monto' => 'required|numeric|min:0',
             'descripcion' => 'nullable|string',
+            'actividad_id' => 'required|exists:actividads,id',
         ]);
     
         // Inicializar un nuevo arreglo para almacenar los IDs de los estudiantes
@@ -54,6 +62,7 @@ class PagoController extends Controller
         // Crear nuevos pagos
         foreach ($estudiantesIds as $estudianteId) {
             $pago = new Pago();
+            $pago->actividad_id = $request->actividad_id;
             $pago->estudiante_id = $estudianteId;
             $pago->monto = $request->monto;
             $pago->descripcion = $request->descripcion;

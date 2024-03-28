@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('pagos', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('actividad_id')->nullable()->constrained('actividads')->onDelete('cascade');
             $table->foreignId('estudiante_id')->nullable()->constrained('estudiantes')->onDelete('cascade');
             $table->decimal('monto', 8, 2);
             $table->enum('estado', ['pendiente', 'pagado'])->default('pendiente');
