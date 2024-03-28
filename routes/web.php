@@ -1,7 +1,8 @@
 <?php
 
+use App\Http\Controllers\EstudianteController;
 use App\Http\Controllers\EventoController;
-use App\Http\Controllers\PagosController;
+use App\Http\Controllers\PagoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -29,7 +30,25 @@ Route::middleware('auth')->group(function () {
 
 
     Route::get('/user', [UserController::class, 'index'])->name('user.index');
-    Route::get('/pago', [PagosController::class, 'index'])->name('pago.index');
+//pagos
+Route::resource('pago', PagoController::class)->only(['index', 'create', 'store', 'edit', 'update'])->names([
+    'index' => 'pago.index',
+    'create' => 'pago.create',
+    'store' => 'pago.store',
+    'edit' => 'pago.edit',
+    'update' => 'pago.update',
+]);
+//Route::resource('pago', PagoController::class)->only(['edit', 'update']);
+
+
+Route::delete('estudiante/{estudiante}', [EventoController::class, 'destroy'])->name('estudiante.destroy');
+//estudiante
+Route::resource('estudiante', EstudianteController::class)->only(['index', 'create', 'store'])->names([
+    'index' => 'estudiante.index',
+    'create' => 'estudiante.create',
+    'store' => 'estudiante.store',
+]);
+Route::delete('estudiante/{estudiante}', [EventoController::class, 'destroy'])->name('estudiante.destroy');
 
 
 
