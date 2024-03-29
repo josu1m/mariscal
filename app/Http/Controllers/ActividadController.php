@@ -41,6 +41,9 @@ class ActividadController extends Controller
             'fecha_fin' => 'nullable|date',
         ]);
     
+        // Obtener todos los registros existentes y establecer su actividad_estado en false
+        Actividad::where('actividad_estado', true)->update(['actividad_estado' => false]);
+    
         // Si no se proporciona actividad_estado en el formulario, establecerlo como verdadero (true) por defecto
         $actividad_estado = $request->has('actividad_estado') ? $request->actividad_estado : true;
     
@@ -58,6 +61,7 @@ class ActividadController extends Controller
         // Redireccionar a alguna parte adecuada de tu aplicación
         return redirect()->route('pago.index');
     }
+    
     
 
     /**

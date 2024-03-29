@@ -8,7 +8,7 @@
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-2">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 bg-white border-b border-gray-200">
-                <form id="actividadForm" class="max-w-md mx-auto">
+                <form id="actividadForm" class="max-w-md mx-auto" method="POST" action="{{ route('actividad.store') }}">
                     @csrf
                     <div class="mb-4">
                         <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre de la
@@ -30,42 +30,3 @@
         </div>
     </div>
 </x-app-layout>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Capturar el evento submit del formulario
-        document.getElementById('actividadForm').addEventListener('submit', function (event) {
-            event.preventDefault(); // Evitar que el formulario se envíe automáticamente
-
-            // Obtener los valores del formulario
-            var nombre = document.getElementById('nombre').value;
-            var fechaFin = document.getElementById('fecha_fin').value;
-            var actividadId = document.getElementById('actividad_id').value;
-
-            // Configurar los datos a enviar
-            var formData = new FormData();
-            formData.append('nombre', nombre);
-            formData.append('fecha_fin', fechaFin);
-            formData.append('actividad_id', actividadId);
-
-            // Realizar la solicitud POST al servidor
-            fetch('{{ route("actividad.store") }}', {
-                method: 'POST',
-                body: formData
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Error al guardar la actividad');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Actividad guardada correctamente');
-                    // Aquí puedes redirigir a otra página o realizar otras acciones después de guardar la actividad
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        });
-    });
-</script>

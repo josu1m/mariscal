@@ -6,6 +6,8 @@ use App\Models\Actividad;
 use App\Models\Pago;
 use Illuminate\Http\Request;
 use App\Models\Estudiante;
+use Illuminate\Support\Facades\DB;
+
 
 
 class PagoController extends Controller
@@ -13,14 +15,46 @@ class PagoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Cargar los pagos con las relaciones 'estudiante' y 'actividad' ordenados por fecha de creación de forma descendente
-        $pagos = Pago::with(['estudiante', 'actividad'])->orderBy('created_at', 'desc')->get();
+        // Obtener el término de búsqueda del parámetro 'search' en la solicitud
+        $searchTerm = $request->query('search');
     
-        return view("administrador.pago.index", compact('pagos'));
+        // Cargar los pagos con las relaciones 'estudiante' y 'actividad' ordenados por fecha de creación de forma descendente
+        $query = Pago::with(['estudiante', 'actividad'])->orderBy('created_at', 'desc');
+    
+        // Si hay un término de búsqueda, aplicar el filtro
+        if ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm) {
+                $q->whereHas('actividad', function ($q) use ($searchTerm) {
+                    $q->where('nombre', 'LIKE', "%$searchTerm%");
+                })->orWhereHas('estudiante', function ($q) use ($searchTerm) {
+                    $q->whereRaw("CONCAT(nombre, ' ', apellido) LIKE ?", ["%$searchTerm%"])
+                      ->orWhere('dni', 'LIKE', "%$searchTerm%");
+                });
+            });
+        }
+    
+        // Obtener los pagos paginados
+        $pagos = $query->paginate(10);
+    
+        // Agrupar los pagos por nombre de la actividad
+        $pagosPorActividad = $pagos->groupBy('actividad.nombre');
+    
+        // Retornar la vista con los pagos paginados y agrupados por actividad
+        return view("administrador.pago.index", compact('pagosPorActividad'));
     }
     
+    
+    
+    
+    
+    
+
+
+
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -28,10 +62,10 @@ class PagoController extends Controller
     public function create()
     {
         $estudiantes = Estudiante::all();
-        
+
         // Recuperar solo las actividades que están activas
         $actividads = Actividad::where('actividad_estado', true)->get();
-        
+
         return view("administrador.pago.create", compact('estudiantes', 'actividads'));
     }
 
@@ -46,10 +80,10 @@ class PagoController extends Controller
             'descripcion' => 'nullable|string',
             'actividad_id' => 'required|exists:actividads,id',
         ]);
-    
+
         // Inicializar un nuevo arreglo para almacenar los IDs de los estudiantes
         $estudiantesIds = [];
-    
+
         // Verificar si se seleccionaron todos los estudiantes
         if ($request->filled('estudiante_id') && in_array('seleccionar_todos', $request->estudiante_id)) {
             // Obtener los IDs de todos los estudiantes y agregarlos al arreglo
@@ -58,7 +92,7 @@ class PagoController extends Controller
             // Si no se seleccionaron todos los estudiantes, agregar los IDs seleccionados al arreglo
             $estudiantesIds = $request->input('estudiante_id', []);
         }
-    
+
         // Crear nuevos pagos
         foreach ($estudiantesIds as $estudianteId) {
             $pago = new Pago();
@@ -68,12 +102,12 @@ class PagoController extends Controller
             $pago->descripcion = $request->descripcion;
             $pago->save();
         }
-    
+
         // Redireccionar a alguna parte adecuada de tu aplicación
         return redirect()->route('pago.index');
     }
-    
-    
+
+
 
     /**
      * Display the specified resource.
@@ -86,7 +120,7 @@ class PagoController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit( $id)
+    public function edit($id)
     {
 
         $pago = Pago::find($id);
